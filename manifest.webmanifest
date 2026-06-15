@@ -1,0 +1,19 @@
+{
+  "name": "Dashboard Lubuk IT",
+  "short_name": "Lubuk IT",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "standalone"],
+  "background_color": "#11101f",
+  "theme_color": "#11101f",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "assets/brand/lubukit-app-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
