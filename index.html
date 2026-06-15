@@ -11,7 +11,7 @@
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="icon" type="image/png" sizes="512x512" href="assets/brand/lubukit-app-icon.png">
     <link rel="apple-touch-icon" href="assets/brand/lubukit-app-icon.png">
-    <link rel="stylesheet" href="styles.css?v=97">
+    <link rel="stylesheet" href="styles.css?v=98">
   </head>
   <body class="needs-login">
     <main class="app-shell" aria-label="Dashboard Lubuk IT">
@@ -30,17 +30,23 @@
           <div class="auth-gate-card">
             <div>
               <p>Dashboard Lubuk IT</p>
-              <h1>Create Account</h1>
-              <span>Staff baru isi detail di sini. Kalau account sudah ada, terus login.</span>
+              <h1 id="authGateTitle">Login Your Account</h1>
+              <span id="authGateIntro">Masukkan email dan password. Role akan ikut database staff yang sudah di-approve.</span>
             </div>
-            <form class="auth-gate-form" id="firstAccessForm">
+            <form class="auth-gate-form" id="authGateLoginForm">
+              <label>Email<input name="email" type="email" placeholder="staff@lubukit.com" required></label>
+              <label>Password<input name="password" type="password" placeholder="Password Firebase" required></label>
+              <button class="save-bio" type="submit">Login</button>
+              <button class="text-cancel" type="button" data-action="showSignupGate">Sign Up Staff Baru</button>
+            </form>
+            <form class="auth-gate-form" id="firstAccessForm" hidden>
               <label>Nama penuh<input id="firstAccessName" type="text" placeholder="Nama staff" required></label>
               <label>Email<input id="firstAccessEmail" type="email" placeholder="staff@lubukit.com" required></label>
               <label>Password<input id="firstAccessPassword" type="password" placeholder="Minimum 6 aksara" required minlength="6"></label>
               <label>No telephone<input id="firstAccessPhone" type="tel" placeholder="60123456789" required></label>
               <label>Gambar profile<input id="firstAccessPhoto" type="file" accept="image/jpeg,image/png" required></label>
               <button class="save-bio" type="submit">Sign Up</button>
-              <button class="text-cancel" type="button" data-action="openLogin">Login Your Account</button>
+              <button class="text-cancel" type="button" data-action="showLoginGate">Login Your Account</button>
             </form>
           </div>
         </section>
@@ -260,8 +266,8 @@
               <p>Masukkan email dan password. Role akan ikut database staff yang sudah di-approve.</p>
             </div>
             <form class="panel-form" id="authForm">
-              <label>Email<input id="authEmail" type="email" placeholder="staff@lubukit.com"></label>
-              <label>Password<input id="authPassword" type="password" placeholder="Password Firebase"></label>
+              <label>Email<input id="authEmail" name="email" type="email" placeholder="staff@lubukit.com"></label>
+              <label>Password<input id="authPassword" name="password" type="password" placeholder="Password Firebase"></label>
               <button class="save-bio" type="submit">Login</button>
             </form>
           </div>
@@ -580,7 +586,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js" defer></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js" defer></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js" defer></script>
-    <script src="firebase-config.js?v=97" defer></script>
-    <script src="app.js?v=97" defer></script>
+    <script src="firebase-config.js?v=98" defer></script>
+    <script src="app.js?v=98" defer></script>
   </body>
 </html>

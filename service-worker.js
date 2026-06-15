@@ -1,4 +1,4 @@
-const CACHE_NAME = "smart-home-dashboard-v97";
+const CACHE_NAME = "smart-home-dashboard-v98";
 const ASSETS = [
   "./",
   "./index.html",

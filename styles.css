@@ -662,6 +662,10 @@ button {
   margin-top: 22px;
 }
 
+.auth-gate-form[hidden] {
+  display: none;
+}
+
 .auth-gate-form label,
 .pending-role-label {
   display: grid;
@@ -686,6 +690,17 @@ button {
 .needs-login .topbar,
 .waiting-approval .topbar {
   display: none;
+}
+
+.needs-login .weather-card,
+.needs-login #lubukView,
+.needs-login .bottom-nav,
+.needs-login .app-panel,
+.waiting-approval .weather-card,
+.waiting-approval #lubukView,
+.waiting-approval .bottom-nav,
+.waiting-approval .app-panel {
+  display: none !important;
 }
 
 .pending-staff-box {

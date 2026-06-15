@@ -545,6 +545,9 @@ function updateAccessScreen() {
   document.querySelector(".bottom-nav")?.toggleAttribute("hidden", !loggedIn || waitingApproval);
   document.querySelector(".weather-card")?.toggleAttribute("hidden", !loggedIn || waitingApproval);
   $("lubukView")?.toggleAttribute("hidden", !loggedIn || waitingApproval);
+  if (!loggedIn || waitingApproval) {
+    closeAllPanels();
+  }
 }
 
 function firebaseConfig() {
@@ -723,8 +726,11 @@ function openAuthPanel() {
 
 async function loginAccount(event) {
   event.preventDefault();
-  const email = $("authEmail").value.trim();
-  const password = $("authPassword").value;
+  const form = event.currentTarget;
+  const emailInput = form?.elements?.email || $("authEmail");
+  const passwordInput = form?.elements?.password || $("authPassword");
+  const email = emailInput.value.trim();
+  const password = passwordInput.value;
   const services = initFirebaseCore();
 
   if (services?.auth && firebaseConfig().enabled) {
@@ -737,7 +743,7 @@ async function loginAccount(event) {
         role: staff?.role || "pending",
         local: false
       });
-      $("authPassword").value = "";
+      passwordInput.value = "";
       closeNavPanel();
       window.alert("Login berjaya.");
       return;
@@ -754,9 +760,23 @@ async function loginAccount(event) {
     role: staff?.role || "pending",
     local: true
   });
-  $("authPassword").value = "";
+  passwordInput.value = "";
   closeNavPanel();
   window.alert(staff?.role ? "Login local aktif untuk testing." : "Account belum ada role. Tunggu approval role.");
+}
+
+function showSignupGate() {
+  $("authGateTitle").textContent = "Create Account";
+  $("authGateIntro").textContent = "Staff baru isi detail di sini. Selepas daftar, tunggu Boss/Admin/HR approve role.";
+  $("authGateLoginForm").hidden = true;
+  $("firstAccessForm").hidden = false;
+}
+
+function showLoginGate() {
+  $("authGateTitle").textContent = "Login Your Account";
+  $("authGateIntro").textContent = "Masukkan email dan password. Role akan ikut database staff yang sudah di-approve.";
+  $("firstAccessForm").hidden = true;
+  $("authGateLoginForm").hidden = false;
 }
 
 async function registerFirstAccess(event) {
@@ -827,6 +847,7 @@ function applyRoleAccess() {
 
   document.body.dataset.role = account.role;
   updateAccessScreen();
+  if (!isAppLoggedIn() || account.role === "pending") return;
   const isBoss = canAccess("all");
   document.body.classList.toggle("boss-account", isBoss);
   document.querySelector("[data-nav='settings']")?.toggleAttribute("hidden", !isBoss && !canAccess("settings:manage"));
@@ -960,6 +981,7 @@ function openWhatsappVideo() {
 }
 
 function refreshLoveLabels() {
+  if (!$("loveWhatsappLabel") || !$("loveLocationLabel") || !$("loveBioLabel")) return;
   const bio = getBio();
   const phone = storage.getItem("loveWhatsapp") || normalisePhone(bio.phone || "");
   const location = storage.getItem("loveLocation") || bio.location;
@@ -1068,6 +1090,7 @@ function saveBankQr(file) {
 }
 
 function refreshDeviceCards() {
+  if (!document.querySelector("[data-device]")) return;
   const devices = getDeviceStates();
   document.querySelectorAll("[data-device]").forEach((card) => {
     const isOn = Boolean(devices[card.dataset.device]);
@@ -1087,6 +1110,7 @@ function toggleDevice(key) {
 }
 
 function refreshUsageStats() {
+  if (!$("statActive") || !$("statTotal") || !$("statWeather")) return;
   const devices = getDeviceStates();
   const values = Object.values(devices);
   $("statActive").textContent = values.filter(Boolean).length;
@@ -1116,6 +1140,7 @@ function getNextBirthday(value) {
 }
 
 function refreshBirthdayStatus() {
+  if (!$("birthdayStatus") || !$("birthdayCountdown")) return;
   const bio = getBio();
   const next = getNextBirthday(bio.birthday);
 
@@ -1134,6 +1159,7 @@ function refreshBirthdayStatus() {
 }
 
 function loadBioForm() {
+  if (!$("bioForm")) return;
   const bio = getBio();
   const form = $("bioForm");
   bioFields.forEach((field) => {
@@ -1143,6 +1169,7 @@ function loadBioForm() {
 }
 
 function saveBioForm() {
+  if (!$("bioForm")) return;
   const form = $("bioForm");
   const bio = {};
   bioFields.forEach((field) => {
@@ -1158,11 +1185,13 @@ function saveBioForm() {
 }
 
 function openBioPanel() {
+  if (!$("bioPanel")) return;
   loadBioForm();
   $("bioPanel").hidden = false;
 }
 
 function closeBioPanel() {
+  if (!$("bioPanel")) return;
   $("bioPanel").hidden = true;
 }
 
@@ -1231,6 +1260,7 @@ function parseDateKey(value) {
 }
 
 function setupCalendarControls() {
+  if (!$("calendarMonth") || !$("calendarYear")) return;
   const monthNames = Array.from({ length: 12 }, (_, index) => (
     new Intl.DateTimeFormat("en-MY", { month: "short" }).format(new Date(2026, index, 1))
   ));
@@ -1243,6 +1273,7 @@ function setupCalendarControls() {
 }
 
 function syncCalendarInputs() {
+  if (!$("calendarDate") || !$("calendarMonth") || !$("calendarYear") || !$("selectedDateText") || !$("calendarTitle")) return;
   $("calendarDate").value = dateKey(selectedCalendarDate);
   $("calendarMonth").value = String(selectedCalendarDate.getMonth());
   $("calendarYear").value = String(selectedCalendarDate.getFullYear());
@@ -1259,6 +1290,7 @@ function syncCalendarInputs() {
 }
 
 function renderCalendar() {
+  if (!$("calendarGrid")) return;
   const notes = getCalendarNotes();
   const year = selectedCalendarDate.getFullYear();
   const month = selectedCalendarDate.getMonth();
@@ -1284,6 +1316,7 @@ function selectCalendarDate(date) {
 }
 
 function openCalendarNote() {
+  if (!$("calendarNotePanel") || !$("noteDate") || !$("noteText") || !$("noteNotify")) return;
   const key = dateKey(selectedCalendarDate);
   const notes = getCalendarNotes();
   $("noteDate").value = key;
@@ -1293,6 +1326,7 @@ function openCalendarNote() {
 }
 
 async function saveCalendarNote() {
+  if (!$("noteDate") || !$("noteText") || !$("noteNotify")) return;
   const key = $("noteDate").value || dateKey(selectedCalendarDate);
   const notes = getCalendarNotes();
   notes[key] = {
@@ -1416,6 +1450,11 @@ function renderMainDashboard() {
 }
 
 function switchView(view, activeTab) {
+  const account = getCurrentAccount();
+  if (!isAppLoggedIn() || account.role === "pending") {
+    updateAccessScreen();
+    return;
+  }
   document.querySelectorAll(".tab").forEach((tab) => {
     tab.classList.toggle("active", tab.dataset.tab === "lubuk");
   });
@@ -1507,11 +1546,13 @@ function formatMoney(value) {
 }
 
 function openTargetPanel() {
+  if (!$("targetPanel")) return;
   openAppPanel("targetPanel");
   renderTargets();
 }
 
 function renderTargets() {
+  if (!$("targetList") || !$("targetCardLabel")) return;
   const targets = getTargets();
   const settings = getSettings();
   $("targetCardLabel").textContent = targets.length ? `${targets.length} target aktif` : "Set goal dan monitor duit";
@@ -3698,17 +3739,20 @@ function getYoutubeId(value) {
 }
 
 function openMusicPanel() {
+  if (!$("musicPanel") || !$("musicSearch")) return;
   $("musicPanel").hidden = false;
   $("musicPanel").classList.remove("minimized");
   $("musicSearch").focus();
 }
 
 function closeMusicPanel() {
+  if (!$("musicPanel")) return;
   $("musicPanel").hidden = true;
   $("musicPanel").classList.remove("minimized");
 }
 
 function minimizeMusicPanel() {
+  if (!$("musicPanel")) return;
   $("musicPanel").classList.toggle("minimized");
 }
 
@@ -4030,6 +4074,8 @@ function setupInteractions() {
     const type = action.dataset.action;
     if (type === "closePanel") closeNavPanel();
     if (type === "openLogin") openAuthPanel();
+    if (type === "showSignupGate") showSignupGate();
+    if (type === "showLoginGate") showLoginGate();
     if (type === "logoutAccount") logoutAccount();
     if (type === "shareProjectChat") shareProjectChat();
     if (type === "resetApp") resetAppData();
@@ -4212,6 +4258,7 @@ function setupInteractions() {
   });
 
   $("authForm").addEventListener("submit", loginAccount);
+  $("authGateLoginForm")?.addEventListener("submit", loginAccount);
 
   $("companyForm").addEventListener("submit", saveCompany);
 
